@@ -26,7 +26,7 @@
         {
             if(empty($_POST["usuario"]) || empty($_POST["clave"]) )
             {
-                $alert = "Ingrese su usuario y contraseña.";
+                $alert = "Ingrese su usuario y contraseña por favor.";
             }
             else{
                 require("conexion.php");
