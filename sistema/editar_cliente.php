@@ -13,7 +13,7 @@
     }
     $id_cliente = $_REQUEST["id"];
     
-    $sql = mysqli_query($conection,"SELECT * FROM cliente WHERE idcliente = $id_cliente");
+    $sql = mysqli_query($conection,"SELECT * FROM cliente WHERE idcliente = $id_cliente AND estatus = 1");
     $result_sql = mysqli_num_rows($sql);
     
     if($result_sql == 0)
