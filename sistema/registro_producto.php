@@ -33,8 +33,6 @@
             
 
         }           
-        mysqli_close($conection);
-
 
     }      
     
@@ -60,8 +58,29 @@
 
             <form action="" method="post" enctype="multipart/form-data">
                 <label for="proveedor">Proveedor</label>
+                 
+                <?php
+                    $query_proveedor = mysqli_query($conection,"SELECT codproveedor, proveedor FROM proveedor WHERE estatus = 1
+                                                                ORDER BY proveedor ASC");
+
+                    $result_proveedor = mysqli_num_rows($query_proveedor);
+                    mysqli_close($conection);
+                ?>
+
                 <select name="proveedor" id="proveedor">
-                    <option value="1">Sony</option>
+                
+                <?php
+                    if($result_proveedor > 0 ){
+                        while($proveedor = mysqli_fetch_array($query_proveedor)){
+                ?> 
+                    <option value="<?php echo $proveedor["codproveedor"];?>"><?php echo $proveedor["proveedor"]?></option>
+
+                <?php    
+
+                        }
+                    }
+                ?>
+                
                 </select>
                 <label for="producto">Producto</label>
                 <input type="text" name="producto" id="producto" placeholder="Nombre de producto">
@@ -72,14 +91,15 @@
                 <label for="cantidad">Cantidad</label>           
                 <input type="number" name="cantidad" id="cantidad" placeholder="Cantidad del producto">
                 <!-- <input type="submit" value="Guardar Cliente" class="btn_save"> -->
-
                 <div class="photo">
                     <label for="foto">Foto</label>
-                    <div class="prevPhoto"></div>
-                    <span class="delPhoto notBlock">X</span>
-                    <label for="foto"></label>
+                    <div class="prevPhoto">
+                        <span class="delPhoto notBlock">X</span>
+                        <label for="foto"></label>
+                    </div>
                     <div class="upimg">
                     <input type="file" name="foto" id="foto">
+                    </div>
                     <div id="form_alert"></div>
                 </div>
                 
