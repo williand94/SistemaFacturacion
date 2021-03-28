@@ -1,7 +1,7 @@
 <?php
 
    session_start();
-   if($_SESSION["rol"] != 1 AND $_SESSION["rol"] !=2)
+   if($_SESSION["rol"] != 1 && $_SESSION["rol"] !=2)
    {
        header("Location: ./");
    } 
@@ -9,35 +9,57 @@
 
     if(!empty($_POST))
     {
+        
         $alert='';
-        if(empty($_POST["proveedor"]) || empty($_POST["contacto"])||empty($_POST["telefono"])||empty($_POST["direccion"]))
-        {
-            $alert = '<p class="msg_error">Todos lo campos son obligatorios.</p>';
+        
+        if(empty($_POST["proveedor"]) || empty($_POST["producto"])||empty($_POST["precio"])|| $_POST["precio"] <= 0
+        || empty($_POST["cantidad"])  || $_POST["cantidad"] <= 0 )
+        {      
+            $alert = '<p class="msg_error">Todos lo campos son obligatorios. Y NO puedes ingresar valor negativos.</p>';
                    
         }else{
 
             $proveedor  = $_POST["proveedor"];
-            $contacto     = $_POST["contacto"];
-            $telefono   = $_POST["telefono"];
-            $direccion  = $_POST["direccion"];
+            $producto   = $_POST["producto"];
+            $precio     = $_POST["precio"];
+            $cantidad   = $_POST["cantidad"];
             $usuario_id = $_SESSION["idUser"];
 
-            $query_insert = mysqli_query($conection,"INSERT INTO proveedor(proveedor,contacto,telefono,direccion,usuario_id)
-                                                        VALUES('$proveedor','$contacto',$telefono,'$direccion','$usuario_id')");
-                 if($query_insert)
+            $foto         = $_FILES["foto"];
+            $nombre_foto  = $foto["name"];
+            $type         = $foto["type"];
+            $url_temp     = $foto["tmp_name"];
+
+            $imgProducto  = 'img_producto.jpg';
+
+            if($nombre_foto != '')
+            {
+                $destino      = 'img/uploads/';
+                $img_nombre   = 'img_'.md5(date('d-m-Y H:m:s'));
+                $imgProducto  = $img_nombre.'.jpg';
+                $src          = $destino.$imgProducto;    
+            }
+
+
+            $query_insert = mysqli_query($conection,"INSERT INTO producto(proveedor,descripcion,precio,existencia,usuario_id,foto)
+                                                        VALUES('$proveedor','$producto',$precio,$cantidad,$usuario_id,'$imgProducto')");
+                 if($query_insert)                 
                  {
-                     $alert = '<p class="msg_save">Proveedor guardado correctamente.</p>';
+                    if($nombre_foto != '')
+                    {
+                        move_uploaded_file($url_temp,$src);
+                    }
+
+                     $alert = '<p class="msg_save">Producto guardado correctamente.</p>';
                  }else{
-                     $alert = '<p class="msg_error">Error al guardar proveedor.</p>';
+                     $alert = '<p class="msg_error">Error al guardar el producto.</p>';
                  }   
             
 
         }           
 
-    }      
+    }   
     
-
-
 ?>
 
 <!DOCTYPE html>
