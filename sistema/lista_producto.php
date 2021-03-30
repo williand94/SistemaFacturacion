@@ -1,9 +1,5 @@
 <?php 
 	session_start();
-	if($_SESSION["rol"] != 1 AND $_SESSION["rol"] != 2)
-	{
-		header("Location: ./");
-	}
    	include "../conexion.php";	
 ?>
 
@@ -12,15 +8,15 @@
 <head>
 	<meta charset="UTF-8">
 	<?php include "includes/scripts.php";?>
-	<title>Lista de Proveedores</title>
+	<title>Lista de Productos</title>
 </head>
 <body>
 	<?php include "includes/header.php"; ?>
 	<section id="container">
-		<h1><i class="fas fa-clipboard-list"></i> Lista de Proveedores</h1>
-		<a href="registro_proveedor.php" class="btn_new"><i class="fas fa-plus"></i>  Registrar Proveedor</a>
+		<h1><i class="fas fa-cube"></i> Lista de Productos</h1>
+		<a href="registro_producto.php" class="btn_new"><i class="fas fa-plus"></i> Registrar producto</a>
 		
-		<form action="buscar_proveedor.php" method="GET" class="form_search">
+		<form action="buscar_producto.php" method="GET" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<!-- <input type="submit" value="Buscar" class="btn_search"> -->
 			<button type="submit"  class="btn_search"><i class="fas fa-search"></i></button>
@@ -30,17 +26,17 @@
 			
 		<table>
 			<tr>
-				<th>ID</th>
+				<th>Código</th>
+				<th>Descripcción</th>
+				<th>Precio</th>
+				<th>Existencia</th>
 				<th>Proveedor</th>
-				<th>Contacto</th>
-				<th>Teléfono</th>
-				<th>Dirección</th>
-				<th>Fecha</th>
-				<th>Acciones</th> 
+				<th>Fotos</th> 
+				<th class="center">Acciones</th> 
 			</tr>
 			<?php 
 				//Paginador
-				$sql_resgister = mysqli_query($conection," SELECT COUNT(*) AS total_registro FROM proveedor where estatus = 1");
+				$sql_resgister = mysqli_query($conection," SELECT COUNT(*) AS total_registro FROM producto where estatus = 1");
 				$result_register = mysqli_fetch_array($sql_resgister);
 				$total_registro = $result_register['total_registro'];
 				
@@ -56,8 +52,12 @@
 				$desde = ($pagina - 1) * $por_pagina;
 				$total_paginas = ceil($total_registro/$por_pagina);
 
-				$query = mysqli_query($conection,"SELECT * FROM proveedor
-								                  WHERE estatus = 1 ORDER BY codproveedor ASC LIMIT $desde , $por_pagina");
+				$query = mysqli_query($conection,"SELECT p.codproducto, p.descripcion, p.precio, p.existencia,
+														 pr.proveedor,p.foto
+												  FROM producto p
+												  INNER JOIN proveedor pr
+												  ON p.proveedor = pr.codproveedor
+								                  WHERE p.estatus = 1 ORDER BY p.codproducto DESC LIMIT $desde , $por_pagina");
 			
 				mysqli_close($conection);
 			
@@ -67,30 +67,42 @@
 				{
 				while($data = mysqli_fetch_array($query)){
 					
-					$formato = 'Y-m-d H:i:s';
-					$fecha   = DateTime::createFromFormat($formato,$data["date_add"]); 
-                  				
+                    if($data["foto"] != 'img_producto.jpg')
+                    {
+                        $foto = 'img/uploads/'.$data["foto"];
+                    }else {
+                        $foto = 'img/'.$data["foto"];
+                    }					
 			?>	
 			<tr>
-				<td><?php echo $data["codproveedor"];?></td>
+				<td><?php echo $data["codproducto"];?></td>
+				<td><?php echo $data["descripcion"];?></td>
+				<td><?php echo $data["precio"];?></td>
+				<td><?php echo $data["existencia"];?></td>
 				<td><?php echo $data["proveedor"];?></td>
-				<td><?php echo $data["contacto"];?></td>
-				<td><?php echo $data["telefono"];?></td>
-				<td><?php echo $data["direccion"];?></td>
-				<td><?php echo $fecha->format('d-m-Y');?></td>
-				<td>			
-					<a class="link_edit" href="editar_proveedor.php?id=<?php echo $data["codproveedor"];?>"><i class="far fa-edit"></i>
+				<td class="img_producto"><img src="<?php echo $foto;?>" alt="<?php echo $data["descripcion"];?>"> </td>
+			
+				<?php if($_SESSION['rol'] == 1){?>
+
+				<td class="centerTD">	
+					<a class="link_add center" href="agregar_producto.php?id=<?php echo $data["codproducto"];?>"><i class="fas fa-plus"></i>
+					Agregar</a>
+					|		
+					<a class="link_edit center" href="editar_producto.php?id=<?php echo $data["codproducto"];?>"><i class="far fa-edit"></i>
 					Editar</a> 
 										
-					| <a class="link_delete" href="eliminar_confirmar_proveedor.php?id=<?php echo $data["codproveedor"];?>"><i class="far fa-trash-alt"></i> 
-					Eliminar</a>
 
-				<?php
+					| <a class="link_delete center" href="eliminar_confirmar_producto.php?id=<?php echo $data["idcliente"];?>"><i class="far fa-trash-alt"></i> 
+					Eliminar</a>
+				</td>
+
+				<?php }?>	
+		
+		 <?php
 				}
 			}
 	
 		 ?>		
-				</td>
 
 			</tr>
 			
