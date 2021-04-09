@@ -46,7 +46,6 @@
                     $_SESSION["active"] = true;
                     $_SESSION["idUser"] = $data["idusuario"];
                     $_SESSION["nombre"] = $data["nombre"];
-                    $_SESSION["idUser"] = $data["idusuario"];
                     $_SESSION["email"]  = $data["correo"];
                     $_SESSION["user"]   = $data["usuario"];
                     $_SESSION["rol"]    = $data["rol"];
