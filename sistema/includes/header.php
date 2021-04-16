@@ -20,3 +20,7 @@
 		</div>
 		<?php include "nav.php"; ?>
 	</header>
+	<div class="modal">
+		<div class="bodyModal">			
+		</div>
+	</div>
